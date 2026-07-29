@@ -245,21 +245,27 @@
     question.classList.add('show');
   });
 
-  // "Yes" brings the guest to the birthday page
+  // "Yes" brings the guest to the balloons page
   yesBtn.addEventListener('click', ()=>{
-    window.location.href = 'flex.html';
+    window.location.href = 'balloons.html';
   });
 
   // "No" floats/dodges away whenever it's approached or clicked
   function dodge(){
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    const margin = 20;
-    const maxLeft = window.innerWidth - btnWidth - margin;
-    const maxTop = window.innerHeight - btnHeight - margin;
+    const margin = 30;
+    const minX = margin;
+    const maxX = window.innerWidth - btnWidth - margin;
+    const minY = margin;
+    const maxY = window.innerHeight - btnHeight - margin;
 
-    const newLeft = Math.random()*(maxLeft-margin)+margin;
-    const newTop = Math.random()*(maxTop-margin)+margin;
+    // Ensure valid range
+    const safeMaxX = Math.max(minX + 10, maxX);
+    const safeMaxY = Math.max(minY + 10, maxY);
+
+    const newLeft = Math.random()*(safeMaxX-minX)+minX;
+    const newTop = Math.random()*(safeMaxY-minY)+minY;
 
     if(!noBtn.classList.contains('dodging')){
       const rect = noBtn.getBoundingClientRect();
@@ -270,8 +276,8 @@
       noBtn.offsetHeight;
     }
 
-    noBtn.style.left = newLeft+'px';
-    noBtn.style.top = newTop+'px';
+    noBtn.style.left = Math.round(newLeft)+'px';
+    noBtn.style.top = Math.round(newTop)+'px';
     hint.style.display = 'block';
   }
 
