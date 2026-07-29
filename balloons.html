@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pop the Balloons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-deep:#160f2e;
+    --sky-mid:#2c2059;
+    --sky-violet:#4a3789;
+    --gold:#e8b94d;
+    --blush:#f0a3b8;
+    --cream:#fbf3e6;
+    --cream-dim:#cfc4e6;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:linear-gradient(180deg,var(--sky-deep) 0%, var(--sky-mid) 55%, var(--sky-violet) 100%);
+    font-family:'Quicksand',sans-serif;
+    color:var(--cream);
+    overflow-x:hidden;
+    min-height:100vh;
+    position:relative;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  #stars{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .star{
+    position:absolute;
+    background:var(--cream);
+    border-radius:50%;
+    opacity:0.7;
+    animation:twinkle 3.5s ease-in-out infinite;
+  }
+
+  @keyframes twinkle{
+    0%,100%{opacity:0.15; transform:scale(0.8);}
+    50%{opacity:1; transform:scale(1.2);}
+  }
+
+  .container{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1.5rem;
+  }
+
+  .header{
+    text-align:center;
+    margin-bottom:3rem;
+  }
+
+  .eyebrow{
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    font-size:0.7rem;
+    color:var(--gold);
+    margin-bottom:1.2rem;
+    font-weight:600;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 0.2s;
+  }
+
+  .title{
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(2.2rem, 8vw, 4.5rem);
+    color:var(--gold);
+    line-height:1;
+    text-shadow:0 0 30px rgba(232,185,77,0.45);
+    opacity:0;
+    animation:fadeUp 1.2s ease forwards 0.5s;
+    margin-bottom:0.8rem;
+  }
+
+  .subtitle{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(1.1rem, 2.5vw, 1.4rem);
+    color:var(--cream-dim);
+    opacity:0;
+    animation:fadeUp 1.2s ease forwards 0.9s;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .balloons-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2rem;
+    justify-content:center;
+    align-items:flex-end;
+    margin:3rem 0;
+    min-height:300px;
+  }
+
+  .balloon{
+    width:80px;
+    height:100px;
+    cursor:pointer;
+    position:relative;
+    transition:transform 0.3s ease;
+    animation:float 3s ease-in-out infinite;
+  }
+
+  .balloon:hover{
+    transform:scale(1.1);
+  }
+
+  @keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-15px);}
+  }
+
+  .balloon-body{
+    width:100%;
+    height:80px;
+    border-radius:50% 50% 50% 0;
+    position:relative;
+    cursor:pointer;
+  }
+
+  .balloon-string{
+    position:absolute;
+    width:2px;
+    height:60px;
+    background:var(--cream-dim);
+    left:50%;
+    top:100%;
+    transform:translateX(-50%);
+  }
+
+  .balloon.popped .balloon-body{
+    animation:popBurst 0.5s ease forwards;
+  }
+
+  .balloon.popped .balloon-string{
+    opacity:0;
+  }
+
+  @keyframes popBurst{
+    0%{opacity:1; transform:scale(1);}
+    100%{opacity:0; transform:scale(0.3) translateY(-20px) rotate(45deg);}
+  }
+
+  .reveal-section{
+    display:none;
+    opacity:0;
+    animation:fadeUp 1s ease forwards;
+    text-align:center;
+    margin-top:2rem;
+  }
+
+  .reveal-section.show{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .photo-wrapper{
+    position:relative;
+    margin:2rem 0;
+    max-width:400px;
+  }
+
+  .photo-wrapper img{
+    width:100%;
+    border-radius:12px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .message-text{
+    font-family:'Playfair Display', serif;
+    font-size:clamp(1.2rem, 3vw, 1.6rem);
+    color:var(--cream);
+    line-height:1.8;
+    margin:2rem 0;
+    max-width:500px;
+    font-style:italic;
+  }
+
+  .bouquet{
+    font-size:5rem;
+    animation:sway 2s ease-in-out infinite;
+    margin-top:1.5rem;
+  }
+
+  @keyframes sway{
+    0%,100%{transform:rotate(-2deg);}
+    50%{transform:rotate(2deg);}
+  }
+
+  .next-btn{
+    font-family:'Quicksand', sans-serif;
+    font-weight:600;
+    font-size:1rem;
+    letter-spacing:0.03em;
+    color:var(--sky-deep);
+    background:linear-gradient(135deg, var(--gold), var(--blush));
+    border:none;
+    padding:0.95rem 2.4rem;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(232,185,77,0.3);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    margin-top:2rem;
+  }
+
+  .next-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(232,185,77,0.42);
+  }
+
+  .next-btn:focus-visible{
+    outline:3px solid var(--cream);
+    outline-offset:3px;
+  }
+
+  .instruction{
+    font-size:0.9rem;
+    color:var(--cream-dim);
+    margin-top:1rem;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 1.3s;
+  }
+</style>
+</head>
+<body>
+
+<div id="stars" aria-hidden="true"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="eyebrow">One more surprise</div>
+    <div class="title">Pop them all!</div>
+    <p class="subtitle">Click the balloons to reveal something special</p>
+  </div>
+
+  <div class="balloons-container" id="balloonsContainer">
+    <!-- Balloons will be generated here -->
+  </div>
+
+  <p class="instruction" id="instruction">Click on the balloons to pop them ✨</p>
+
+  <div class="reveal-section" id="revealSection">
+    <div class="photo-wrapper">
+      <img src="div.jpg" alt="Sapna with her best friend" loading="lazy">
+    </div>
+    <p class="message-text">Happiest Birthday to my best sister and also my Best Friend 💝</p>
+    <div class="bouquet">💐</div>
+    <button class="next-btn" id="nextBtn">Continue to birthday wishes →</button>
+  </div>
+</div>
+
+<script>
+  // Generate twinkling stars
+  const starsContainer = document.getElementById('stars');
+  const starCount = 90;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const size = Math.random()*2.2+1;
+    s.style.width=size+'px';
+    s.style.height=size+'px';
+    s.style.top=Math.random()*100+'%';
+    s.style.left=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3.5)+'s';
+    s.style.animationDuration=(2.5+Math.random()*3)+'s';
+    starsContainer.appendChild(s);
+  }
+
+  // Balloon colors
+  const balloonColors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#f38181', '#aa96da', '#fcbad3', '#ffd700'];
+
+  // Create balloons
+  const container = document.getElementById('balloonsContainer');
+  for(let i=0; i<8; i++){
+    const balloon = document.createElement('div');
+    balloon.className='balloon';
+    balloon.style.animationDelay = (i*0.2)+'s';
+    
+    const body = document.createElement('div');
+    body.className='balloon-body';
+    body.style.backgroundColor = balloonColors[i];
+    body.style.boxShadow = `inset -8px -8px 15px rgba(0,0,0,0.2), 0 8px 20px ${balloonColors[i]}80`;
+
+    const string = document.createElement('div');
+    string.className='balloon-string';
+
+    balloon.appendChild(body);
+    balloon.appendChild(string);
+    container.appendChild(balloon);
+
+    balloon.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      popBalloon(balloon);
+    });
+  }
+
+  let balloonsPoppedCount = 0;
+  const totalBalloons = 8;
+
+  function popBalloon(balloon){
+    if(balloon.classList.contains('popped')) return;
+    
+    balloon.classList.add('popped');
+    balloonsPoppedCount++;
+
+    // Play a pop sound effect (optional browser sound)
+    playPopSound();
+
+    if(balloonsPoppedCount === totalBalloons){
+      setTimeout(()=>{
+        revealPhoto();
+      }, 800);
+    }
+  }
+
+  function playPopSound(){
+    // Create a simple beep sound using Web Audio API
+    try{
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }catch(e){
+      // Silent if audio fails
+    }
+  }
+
+  function revealPhoto(){
+    const instruction = document.getElementById('instruction');
+    const revealSection = document.getElementById('revealSection');
+    instruction.style.display = 'none';
+    revealSection.classList.add('show');
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
+    window.location.href = 'flex.html';
+  });
+</script>
+
+</body>
+</html>
